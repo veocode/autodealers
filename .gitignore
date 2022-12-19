@@ -1,0 +1,7 @@
+﻿.vs
+.vscode
+bin
+obj
+Properties
+VeoAutoMod.csproj
+VeoAutoMod.sln
