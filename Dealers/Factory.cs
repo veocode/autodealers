@@ -1,7 +1,9 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Globalization;
 using System.Xml;
 using GTA.Math;
+using GTA.UI;
 using VeoAutoMod.Dealers.DTO;
 
 namespace VeoAutoMod.Dealers
@@ -15,21 +17,29 @@ namespace VeoAutoMod.Dealers
             XmlDocument xmlDealers = new XmlDocument();
             xmlDealers.Load(dataFolderPath + "\\" + dealersXmlFileName);
 
-            XmlElement xmlRoot = xmlDealers.DocumentElement;
-            if (xmlRoot != null)
+            try
             {
-                foreach (XmlElement xmlDealerNode in xmlRoot.GetElementsByTagName("dealer"))
+
+                XmlElement xmlRoot = xmlDealers.DocumentElement;
+                if (xmlRoot != null)
                 {
-                    string name = parseStringAttr(xmlDealerNode, "name");
-                    Vector3 position = parsePositionAttrs(xmlDealerNode);
-                    string fileName = parseStringAttr(xmlDealerNode, "file");
-                    string filePath = dataFolderPath + "\\" + fileName;
+                    foreach (XmlElement xmlDealerNode in xmlRoot.GetElementsByTagName("dealer"))
+                    {
+                        string name = parseStringAttr(xmlDealerNode, "name");
+                        Vector3 position = parsePositionAttrs(xmlDealerNode);
+                        string fileName = parseStringAttr(xmlDealerNode, "file");
+                        string filePath = dataFolderPath + "\\" + fileName;
 
-                    DealerConfig config = LoadAutoDealerConfig(filePath);
-                    Dealer dealer = new Dealer(name, position, config);
+                        DealerConfig config = LoadAutoDealerConfig(filePath);
+                        Dealer dealer = new Dealer(name, position, config);
 
-                    autoDealers.Add(dealer);
+                        autoDealers.Add(dealer);
+                    }
                 }
+
+            } catch (Exception e)
+            {
+                Notification.Show($"~r~Auto Dealer failed to load:\n~w~{e.Message}");
             }
 
             return autoDealers;

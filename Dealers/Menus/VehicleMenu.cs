@@ -6,51 +6,59 @@ namespace VeoAutoMod.Dealers.Menus
 {
     class VehicleMenu : Menu
     {
+        private NativeItem buy;
+        private NativeItem openDoors;
+        private NativeItem closeDoors;
+        private NativeItem testDrive;
+        private NativeItem nextSeat;
+        private NativeItem backSeat;
+        private NativeItem leave;
+
         public VehicleMenu(Dealer dealer) : base(dealer) { }
 
-        public override void CreateItems() 
+        public override void CreateItems()
         {
             nativeMenu.UseMouse = false;
 
-            NativeItem buy = new NativeItem("Buy this vehicle");
+            buy = new NativeItem("Buy this vehicle");
             buy.Activated += (object sender, System.EventArgs e) =>
             {
                 Hide();
                 dealer.SelectCurrentVehiclePlate();
-            };            
-            
-            NativeItem openDoors = new NativeItem("Open all doors");
+            };
+
+            openDoors = new NativeItem("Open all doors");
             openDoors.Activated += (object sender, System.EventArgs e) =>
             {
                 foreach (VehicleDoor door in dealer.GetCurrentVehicle().Doors) door.Open();
             };
 
-            NativeItem closeDoors = new NativeItem("Close all doors");
+            closeDoors = new NativeItem("Close all doors");
             closeDoors.Activated += (object sender, System.EventArgs e) =>
             {
                 foreach (VehicleDoor door in dealer.GetCurrentVehicle().Doors) door.Close();
             };
 
-            NativeItem testDrive = new NativeItem("Test Drive");
+            testDrive = new NativeItem("Test Drive");
             testDrive.Activated += (object sender, System.EventArgs e) =>
             {
                 Hide();
                 dealer.TestDriveCurrentVehicle();
             };
 
-            NativeItem nextSeat = new NativeItem("Shuffle to next seat");
+            nextSeat = new NativeItem("Shuffle to next seat");
             nextSeat.Activated += (object sender, System.EventArgs e) =>
             {
                 Game.Player.Character.Task.ShuffleToNextVehicleSeat(dealer.GetCurrentVehicle());
             };
 
-            NativeItem backSeat = new NativeItem("Sit to back seat");
+            backSeat = new NativeItem("Sit to back seat");
             backSeat.Activated += (object sender, System.EventArgs e) =>
             {
                 Game.Player.Character.Task.EnterVehicle(dealer.GetCurrentVehicle(), VehicleSeat.RightRear);
             };
 
-            NativeItem leave = new NativeItem("Leave vehicle");
+            leave = new NativeItem("Leave vehicle");
             leave.Activated += (object sender, System.EventArgs e) =>
             {
                 Game.Player.Character.Task.LeaveVehicle();
@@ -63,6 +71,19 @@ namespace VeoAutoMod.Dealers.Menus
             items.Add(nextSeat);
             items.Add(backSeat);
             items.Add(leave);
+        }
+
+        protected override void BeforeShow()
+        {
+            string vehicleClass = VehicleService.GetClassNameText(vehicle);
+
+            buy.Title = $"Buy this {vehicleClass}";
+            leave.Title = $"Leave {vehicleClass}";
+
+            openDoors.Enabled = !VehicleService.IsBike(vehicle);
+            closeDoors.Enabled = !VehicleService.IsBike(vehicle);
+            nextSeat.Enabled = !VehicleService.IsBike(vehicle);
+            backSeat.Enabled = VehicleService.IsCar(vehicle);
         }
     }
 }

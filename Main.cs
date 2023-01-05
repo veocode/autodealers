@@ -11,7 +11,7 @@ namespace VeoAutoMod
 
         public Main()
         {
-            bool IsDebug = false;
+            bool IsDebug = true;
 
             UIManager.Create();            
             World.Create(IsDebug);

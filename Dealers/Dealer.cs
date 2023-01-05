@@ -15,9 +15,9 @@ namespace VeoAutoMod.Dealers
     {
         const float GreetingDistance = 15f;
 
-        const float VehicleMarkerFrontOffset = 3.2f;
-        const float VehicleBikesFrontOffset = 2.5f;
-        const float VehicleTrucksMarkerFrontOffset = 5.2f;
+        const float MarkerCarFrontOffset = 3.2f;
+        const float MarkerBikeFrontOffset = 2.5f;
+        const float MarkerTruckFrontOffset = 5.2f;
 
         const float VehicleMarkerRadius = .5f;
         const float VehicleMarkerHeight = .5f;
@@ -86,6 +86,7 @@ namespace VeoAutoMod.Dealers
             foreach (SlotDTO slotDTO in config.Slots)
             {
                 VehicleDTO vehicleDTO = vehicleDTOs[slotIndex];
+                vehicleDTO.RandomizePrice();
 
                 slotIndex++;
                 if (slotIndex > config.Vehicles.Count - 1)
@@ -99,7 +100,9 @@ namespace VeoAutoMod.Dealers
                 spawnTask.SetPosition(slotDTO.Position);
                 spawnTask.SetRotation(slotDTO.Rotation);
 
-                spawnTask.OnVehicleCreated((Vehicle vehicle) => RegisterVehicle(vehicle, vehicleDTO));
+                spawnTask.OnVehicleCreated(
+                    (Vehicle vehicle) => RegisterVehicle(vehicle, vehicleDTO)
+                );
 
                 SpawnManager.Queue(spawnTask);
             }
@@ -130,7 +133,14 @@ namespace VeoAutoMod.Dealers
 
         protected void RemoveProp(int id, Vector3 position)
         {
-            Prop prop = Function.Call<Prop>(Hash.GET_CLOSEST_OBJECT_OF_TYPE, position.X, position.Y, position.Z, 1f, id, 0);
+            Prop prop = Function.Call<Prop>(
+                Hash.GET_CLOSEST_OBJECT_OF_TYPE, 
+                position.X, position.Y, position.Z, 
+                1f, 
+                id, 
+                0
+            );
+
             if (prop != null && prop.Handle != 0) prop.Delete();
         }
 
@@ -218,18 +228,20 @@ namespace VeoAutoMod.Dealers
             List<VehicleClass> longVehicleClasses = new List<VehicleClass>() { 
                 VehicleClass.Commercial,
                 VehicleClass.Industrial,
-                VehicleClass.Utility
+                VehicleClass.Military,
+                VehicleClass.Utility,
+                VehicleClass.Service
             };
 
-            float offset = VehicleMarkerFrontOffset;
+            float offset = MarkerCarFrontOffset;
             if (longVehicleClasses.Contains(vehicle.ClassType))
             {
-                offset = VehicleTrucksMarkerFrontOffset;
+                offset = MarkerTruckFrontOffset;
             }   
             
             if (vehicle.ClassType == VehicleClass.Motorcycles)
             {
-                offset = VehicleBikesFrontOffset;
+                offset = MarkerBikeFrontOffset;
             }
 
             Vector3 markerPosition = vehicle.Position + vehicle.ForwardVector * offset;
@@ -266,7 +278,11 @@ namespace VeoAutoMod.Dealers
 
             string menuTitle = dto.Name;
             string menuSubTitle = "Price: " + dto.GetFormattedPrice();
-            menus["ground"].SetTitle(menuTitle, menuSubTitle).Show();
+
+            menus["ground"]
+                .SetVehicle(vehicle)
+                .SetTitle(menuTitle, menuSubTitle)                
+                .Show();
         }        
         
         protected void OnPlayerLeftVehicleMarker()
@@ -281,7 +297,10 @@ namespace VeoAutoMod.Dealers
 
             string menuTitle = dto.Name;
             string menuSubTitle = "Price: " + dto.GetFormattedPrice();
-            menus["vehicle"].SetTitle(menuTitle, menuSubTitle).Show();
+            menus["vehicle"]
+                .SetVehicle(vehicle)
+                .SetTitle(menuTitle, menuSubTitle)
+                .Show();
         }
         
         protected void OnPlayerLeftVehicle()
@@ -410,7 +429,7 @@ namespace VeoAutoMod.Dealers
                 Game.Player.Character.Task.LeaveVehicle();
             } else
             {
-                Game.Player.Character.Position = vehicle.Position + vehicle.ForwardVector * VehicleMarkerFrontOffset;
+                Game.Player.Character.Position = vehicle.Position + vehicle.ForwardVector * MarkerCarFrontOffset;
             }
 
             vehicle.IsDriveable = false;

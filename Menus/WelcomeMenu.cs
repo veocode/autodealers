@@ -7,7 +7,7 @@ namespace VeoAutoMod.Menus
     {
         public WelcomeMenu(string title = "AutoDealers V") : base(title, "")
         {
-            
+
         }
 
         public override void CreateItems()
@@ -20,6 +20,11 @@ namespace VeoAutoMod.Menus
             };
 
             items.Add(addVehicle);
+        }
+
+        protected override void BeforeShow()
+        {
+
         }
     }
 }

@@ -8,7 +8,7 @@ namespace VeoAutoMod.Dealers.Menus
     {
         public PlateMenu(Dealer dealer) : base(dealer) { }
 
-        public override void CreateItems() 
+        public override void CreateItems()
         {
             string platePrompt = Game.Player.Name;
 
@@ -17,8 +17,8 @@ namespace VeoAutoMod.Dealers.Menus
             {
                 Hide();
                 dealer.BuyCurrentVehicle();
-            };            
-            
+            };
+
             NativeItem blackPlate = new NativeItem("Black background");
             blackPlate.Description = "$450";
             blackPlate.Activated += (object sender, System.EventArgs e) =>
@@ -28,7 +28,7 @@ namespace VeoAutoMod.Dealers.Menus
                 Game.Player.Money -= 450;
                 dealer.BuyCurrentVehicle(plateText, LicensePlateStyle.YellowOnBlack);
             };
-            
+
             NativeItem bluePlate = new NativeItem("Blue background");
             bluePlate.Description = "$300";
             bluePlate.Activated += (object sender, System.EventArgs e) =>
@@ -38,7 +38,7 @@ namespace VeoAutoMod.Dealers.Menus
                 Game.Player.Money -= 300;
                 dealer.BuyCurrentVehicle(plateText, LicensePlateStyle.YellowOnBlue);
             };
-                        
+
             NativeItem whitePlate = new NativeItem("White background");
             whitePlate.Description = "$250";
             whitePlate.Activated += (object sender, System.EventArgs e) =>
@@ -53,6 +53,10 @@ namespace VeoAutoMod.Dealers.Menus
             items.Add(blackPlate);
             items.Add(bluePlate);
             items.Add(whitePlate);
+        }
+
+        protected override void BeforeShow()
+        {
         }
     }
 }

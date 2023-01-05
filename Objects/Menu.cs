@@ -20,6 +20,7 @@ namespace VeoAutoMod.Objects
             {
                 foreach (NativeItem item in items) nativeMenu.Add(item);
             }
+
         }
 
         public abstract void CreateItems();
@@ -32,7 +33,7 @@ namespace VeoAutoMod.Objects
             items = null;
         }
 
-        protected void BeforeShow() { }
+        protected abstract void BeforeShow();
 
         public Menu Show()
         {

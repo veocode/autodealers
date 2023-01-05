@@ -25,6 +25,8 @@ namespace VeoAutoMod.Dealers
         private Vector3 vehicleRotation;
         public Vector3 VehicleRotation { get => vehicleRotation; }
 
+        private string vehicleClass;
+
         private Timer timer;
         private TimerBar timerBar;
         private bool isActive = false;
@@ -48,8 +50,10 @@ namespace VeoAutoMod.Dealers
 
             timerBar = UIManager.CreateTimerBar("Test Drive Time Left", DurationSec.ToString());
 
+            vehicleClass = VehicleService.GetClassNameText(vehicle);
+
             Notification.Show("~g~TestDrive Started!\n~w~You have ~b~" + DurationSec + " ~w~seconds");
-            Notification.Show("Leave the vehicle to cancel at any time");
+            Notification.Show($"Leave the {vehicleClass} to finish at any moment");
         }
 
         public void Update()
@@ -62,11 +66,11 @@ namespace VeoAutoMod.Dealers
 
             if (vehicle.IsDamaged)
             {
-                Finish("~r~You damaged the vehicle!\nIt's not on sale anymore");
+                Finish($"~r~You damaged the {vehicleClass}!\nIt's not on sale anymore!");
             }
             if (!Game.Player.Character.IsInVehicle(vehicle))
             {
-                Finish("~g~You left the vehicle");
+                Finish($"~g~You left the {vehicleClass}");
             }
         }
 
